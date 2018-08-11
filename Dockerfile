@@ -4,6 +4,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 \
     PATH="./vendor/bin:$PATH"
 
 RUN apk add --update --no-cache \
+    bash \
     openssh-client \
     rsync
 
