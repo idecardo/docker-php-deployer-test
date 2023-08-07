@@ -36,14 +36,15 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: idecardo/docker-php-deployer-test
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image to DockerHub
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             PHP_VERSION=${{ needs.prepare_variables.outputs.php_version }}
