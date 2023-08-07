@@ -32,4 +32,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            PHP_VERSION=${{ github.ref_name | sed 's/^v//;s/dpd.*//' }}
+            PHP_VERSION="${{ github.ref_name }} | sed 's/^v//;s/dpd.*//'"
