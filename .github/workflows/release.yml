@@ -31,7 +31,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          env:
-            PHP_VERSION: ${{ github.ref_name }} | sed 's/^v//;s/dpd.*//'
           build-args: |
             PHP_VERSION=${{ env.PHP_VERSION }}
+        env:
+          PHP_VERSION: ${{ github.ref_name }} | sed 's/^v//;s/dpd.*//'
