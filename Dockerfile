@@ -1,53 +1,40 @@
-FROM php:alpine
+ARG PHP_VERSION=8.2.9
 
-ENV COMPOSER_ALLOW_SUPERUSER=1 \
-    PATH="./vendor/bin:$PATH"
+FROM php:${PHP_VERSION}-alpine
 
-RUN apk add --update --no-cache \
-    bash \
-    openssh-client \
-    rsync
+COPY --from=composer:2.5.8 /usr/bin/composer /usr/bin/composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-RUN apk add --update --no-cache -t .persistent-deps \
-        # for bz2 extension
-        bzip2-dev \
-        # for gd --with-freetype-dir option
+# Reference for searching module dependencies...
+# https://pkgs.alpinelinux.org/contents?file=${FILENAME}
+RUN set -ex; \
+    apk add --update --no-cache \
+        bash \
+        openssh-client \
+        rsync \
+    \
         freetype-dev \
-        # for gmp extension
+        gettext-dev \
         gmp-dev \
-        # for gd --with-jpeg-dir option
+        icu-dev \
         libjpeg-turbo-dev \
-        # for gd --with-png-dir option
         libpng-dev \
-        # for zip extension
+        libpq-dev \
         libzip-dev \
-    # Environment
-    && set -xe \
-    # Configure
-    && docker-php-ext-configure gd \
-        --with-freetype-dir=/usr/include \
-        --with-jpeg-dir=/usr/include \
-        --with-png-dir=/usr/include \
-    && docker-php-ext-configure zip \
-        --with-libzip \
-    && docker-php-ext-install \
+    ; \
+    docker-php-ext-configure intl; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+    docker-php-ext-install \
         bcmath \
-        bz2 \
         exif \
         gd \
+        gettext \
         gmp \
+        intl \
         pdo_mysql \
+        pdo_pgsql \
         zip \
-    # Composer
-    && php -r "readfile('http://getcomposer.org/installer');" | php -- --install-dir=/usr/local/bin --filename=composer \
-    # Cleanup
-    && apk del --no-cache \
-        freetype-dev \
-        libjpeg-turbo-dev \
-        libpng-dev \
-    && rm -rf \
-        /tmp/* \
-        /var/cache/apk/* \
-        /var/tmp/*
+    ; \
+    rm -rf /tmp/* /usr/local/lib/php/doc/* /var/cache/apk/* /var/tmp/*
 
 WORKDIR /var/www
