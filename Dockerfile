@@ -1,8 +1,8 @@
-ARG PHP_VERSION=8.2.9
+ARG PHP_VERSION
 
 FROM php:${PHP_VERSION}-alpine
 
-COPY --from=composer:2.5.8 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Reference for searching module dependencies...
