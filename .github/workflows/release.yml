@@ -15,7 +15,7 @@ jobs:
         id: variables
         with:
           script: |
-            core.setOutput('php_version', '${{ github.ref_name }}'.replaceAll(/^(v)|(\-?dpd.*)/g, ''))
+            core.setOutput('php_version', '${{ github.ref_name }}'.replaceAll(/[\w\.]+(\-?php)/g, ''))
 
   push_to_registry:
     name: Push Docker Image to DockerHub
